@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+    <meta charset="UTF-8">
+    <title>My Movie Recommendation</title>
+    <script src="jquery-1.7.1.min.js"></script>
+    <script>
+       $(document).ready(function() {
+          var ajax_url = "NaverMovieRank.php";
+          $.ajax({
+                    type: "get",
+                    url: ajax_url,
+                    error: function(xhr, status, error) {
+                        console.log("error : " + status + ", " + error);
+                        
+                    },
+                    success: function(html) {
+                       // console.log(html);
+                        var p = $(html).find("table.list_ranking > tbody > tr > td.title > a");
+                        p = p[Math.floor(Math.random() * 50) + 1];
+                        
+                        var link = "http://movie.naver.com" + $(p).attr("href");
+                        var title = $(p).text();
+                        var imgUrl = "";
+                        
+                       
+                        $("#viewRandomMovieLoading").hide(); 
+                        var p = $("<div id='random_movie' class='random_movie'><a href='" + link +
+                         "' target='_new'><div class='title'>" + title + 
+                         "</div><img id ='poster_img' src='' /></a></div>");
+                        
+                        
+                        $('#movies').append(p);
+                        p.fadeIn("slow");            
+                        getPosterImage(link);
+                       
+                    }
+          });        
+       
+        });
+        
+        
+        
+        function getPosterImage(link) {
+            var params = {"link":link};
+            var q = $.param(params);
+            var ajax_url = "NaverMovieInfo.php?" + q;
+            $.ajax({
+                type: "get",
+                url: ajax_url,
+                error: function(xhr, status, error) {
+                    console.log("error : " + status + ", " + error);
+                },
+                success: function(html) {
+                    var p = $(html).find("div.main_poster > span > a > img");
+                    console.log(p.attr("src"));
+                    $("#poster_img").attr("src", p.attr("src"));
+                    
+                }
+            });
+        }
+    </script>
+    <head>
+        
+    </head>
+    <body>
+      
+    <div id="movies" class="movies">
+        
+    </div> 
+ 
+<script>
+ 
+</script>
+    </body>
+    
+</html>
