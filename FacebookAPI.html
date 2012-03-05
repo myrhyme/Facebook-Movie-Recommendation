@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+    <meta charset="UTF-8">
+    <title>My Movie Recommendation</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        var access_token = "";
+        var actorMap = new Map();
+        var directorMap = new Map();
+        var recommendMovieMap = new Map();
+        var sortedActors, sortedDirectors;
+        var getRecommendMovieFinished = false;
+        var directorCount = 0;
+        var actorCount = 0;
+        var directorMax = -1;
+        var actorMax = -1; 
+        var index = 0;
+        var sorted = [];
+        var recommendMax = -1;
+        
+        function fbMovieListFetch(token) {
+            var url = "https://graph.facebook.com/me/movies?access_token=" + token + 
+            "&callback=?";
+            $.getJSON(url, function(json) {
+                 var p = "";
+                 console.log(json);
+                 
+                 
+                 $.each(json.data, function(i, fb) {   
+                    getMovieInfo(fb.name, null, false, false);
+                 });
+                  
+                  $("#recommend").fadeIn("slow");
+            });
+      }
+      var params = {"target" : "", "query" : "", "display" : 0, "yearfrom" : "", "yearto" : ""}
+      
+      
+      function showResult() {
+          if(getRecommendMovieFinished === true) {
+             if(index < recommendMax) { 
+                $("#viewRecommendMovieLoading").fadeIn(500);
+                $("#viewRandomMovieLoading").fadeIn(500);      
+                $("#movies").html("");
+                showRecommendMovie(index++);
+                showRandomMovieFromRank();
+              }
+          } else {
+              var sortedActors = actorMap.sort();
+              var sortedDirectors = directorMap.sort();
+              directorMax = sortedDirectors.length;
+              if(directorMax > 10) directorMax = 10;
+              actorMax = sortedActors.length;
+              if(actorMax > 10) actorMax = 10;
+     
+              getRecommendMovies(sortedDirectors, sortedActors);
+              $("#viewRecommendMovieLoading").fadeIn(500);
+              $("#viewRandomMovieLoading").fadeIn(500); 
+        
+              var myInterval = window.setInterval(function() {
+                      
+                if(directorCount == directorMax && actorCount == actorMax) {
+                    clearInterval(myInterval); 
+                    sorted = recommendMovieMap.sort();
+                    
+                    getRecommendMovieFinished = true;                                      
+                    //console.log(sorted);
+                    index = 0;
+                    
+                    $("#movies").html("");
+                    recommendMax = sorted.length;
+                    if(recommendMax > 30) recommendMax = 30;
+                    
+                    showRecommendMovie(index++);
+                    showRandomMovieFromRank();
+                                                     
+                 }
+              }, 20);
+          }
+      }
+      
+      function showRandomMovieFromRank() {
+          var ajax_url = "NaverMovieRank.php";
+          $.ajax({
+                    type: "get",
+                    url: ajax_url,
+                    error: function(xhr, status, error) {
+                        console.log("error : " + status + ", " + error);
+                        
+                    },
+                    success: function(html) {
+                       // console.log(html);
+                        var p = $(html).find("table.list_ranking > tbody > tr > td.title > a");
+                        p = p[Math.floor(Math.random() * 49)];
+                        
+                        console.log(p);
+                        var link = "http://movie.naver.com" + $(p).attr("href");
+                        var title = $(p).text();
+                        
+                        
+                        var p = $("<div id='random_movie' class='random_movie'><a href='" + link +
+                         "' target='_new'><div class='title'>" + title + 
+                         "</div><img id ='poster_img' src='' /></a></div>");
+                        
+                        $('#movies').append(p);
+                       
+                        getPosterImage(link, p, "random");
+                        
+                    }
+          });
+      }
+      function loadImage() { };
+      
+      
+      function getMovieTrailer(title, year) {
+          var youTubeAPIKey = "AI39si7EHr3FOixi92r8WZVcgDMlZKVF_0-h95sR2hWkXngcfdf8zX2Ajnx9HbRo7ToWctvB0qu9MyKMH2a-x-PJ7LEf7OmCFg";
+          var url = "https://gdata.youtube.com/feeds/api/videos?key=" + youTubeAPIKey + "&q=\"" + title + "+" + year + 
+                        "+trailer\"&orderby=relevance&max-results=10&v=2&alt=json&callback=?";
+          console.log(url);
+          console.log(encodeURI(url));
+          $.getJSON(encodeURI(url), function(json) {
+                 var p = "";
+                 console.log(json);
+                 
+                 
+                 // $.each(json.data, function(i, fb) {   
+//                 
+                 // });
+                  
+                
+          });              
+      }
+      
+      function getPosterImage(link, div, type) {
+        var params = {"link":link};
+        var q = $.param(params);
+        var ajax_url = "NaverMovieInfo.php?" + q;
+        $.ajax({
+            type: "get",
+            url: ajax_url,
+            error: function(xhr, status, error) {
+                console.log("error : " + status + ", " + error);
+            },
+            success: function(html) {
+                var p = $(html).find("div.main_poster > span > a > img");
+                var src = p.attr("src");
+                if(src != null) {
+                    src = src.substring(0, src.length - 10);
+                    $(div).find("img").attr("src", src + "?type=m210");
+                    if(type === "random") $("#viewRandomMovieLoading").hide();
+                    else if(type === "recommend") $("#viewRecommendMovieLoading").hide(); 
+                    div.fadeIn("slow");
+                    
+                } else {
+                    if(type === "random") {
+                        //showRandomMovieFromRank();
+                    }
+                    else if(type === "recommend"){
+                       
+                        recommendMax++;
+                        if(recommendMax > sorted.length) 
+                            recommendMax = sorted.length;
+                        showRecommendMovie(index++);
+                        //showResult();
+                        
+                    } 
+                }
+           }
+        });
+      }
+
+      function showRecommendMovie(i) {
+          if(getRecommendMovieFinished === true) {
+             console.log(sorted[i]);
+
+             if(i < recommendMax) {
+                  var movie = sorted[i];
+                  var filmInfo = movie[0].split("|");
+                  var title = filmInfo[0].substr(0, filmInfo[0].length - 6);;
+                  var year = filmInfo[0].substr(filmInfo[0].length - 5, 4);  
+                   
+                  //console.log(title + " " + year);
+                  //getMovieInfo(title, year, true, true);
+                  
+                  var link = filmInfo[1];
+                  //$("#viewRecommendMovieLoading").hide(); 
+                  var p = $("<div id='recommend_movie' class='recommend_movie'><a href='" + link +
+                   "' target='_new'><div class='title'>" + title + 
+                   "</div><img id ='poster_img' src='' /></a></div>");
+                
+                  $('#movies').append(p);
+               
+                  getPosterImage(link, p, "recommend");
+                  getMovieTrailer(title, year);
+                                      
+              }              
+          }
+      }
+      
+    
+          
+      function getRecommendMovies(directors, actors) {
+          params.target = "movieman";
+          params.display = 5;         
+              
+        
+          $.each(directors, function(i, director){
+              //console.log(director[0]);
+              
+              if(i < directorMax) {
+                  var factor = director[1];
+                  params.query = director[0];
+                  var q = $.param(params);
+                  var ajax_url = "naver_api_proxy.php?" + q;
+                  $.ajax(
+                      {
+                        type: "get",
+                        url: ajax_url,
+                        contentType: "text/xml; charset=utf-8",
+                        dataType: "xml",
+                        error: function(xhr, status, error) {
+                            console.log("error : " + status + ", " + error);
+                            
+                        },
+                        success: function(xml) {
+                            var filmo = $(xml).find("filmo");
+                            
+                            $.each(filmo, function(i, film) {
+                                var title = $(film).find("title").text();
+                                var link = $(film).find("link").text();
+                                //console.log(title);
+                                var count = recommendMovieMap.get(title + "|" + link);
+                                if(count == null) count = 0;
+                                count += 1 * factor;
+                                recommendMovieMap.put(title + "|" +  link, count);
+                            });
+                            directorCount++;
+                        }
+                      }
+                  );
+              }
+          });
+          
+         
+          $.each(actors, function(i, actor){
+              //console.log(actor[0]);
+              if(i < actorMax) {
+              
+                  var factor = actor[1];
+                  params.query = actor[0];
+                  var q = $.param(params);
+                  var ajax_url = "naver_api_proxy.php?" + q;
+                  $.ajax(
+                      {
+                        type: "get",
+                        url: ajax_url,
+                        contentType: "text/xml; charset=utf-8",
+                        dataType: "xml",
+                        error: function(xhr, status, error) {
+                            console.log("error : " + status + ", " + error);
+                            
+                        },
+                        success: function(xml) {
+                            var filmo = $(xml).find("filmo");
+                            
+                            $.each(filmo, function(i, film) {
+                                var title = $(film).find("title").text();
+                                var link = $(film).find("link").text();
+                                //console.log(title);
+                                var count = recommendMovieMap.get(title + "|" + link);
+                                if(count == null) count = 0;
+                                count += 1 * factor;
+                                recommendMovieMap.put(title + "|" +  link, count);
+                            });
+                            
+                            actorCount++;
+                        }
+                      }
+                  );
+              }
+          });          
+      }
+      
+      function getMovieInfo(title, year, recommend, show) {
+        params.query = title;
+        params.target = "movie";
+        if(recommend === true) params.display = 1;
+        else params.display = 100;
+        
+        if(year != null) {
+            params.yearfrom = year;
+            params.yearto = year;            
+        }
+        
+        var q = $.param(params);
+        var ajax_url = "naver_api_proxy.php?" + q;
+        $.ajax({
+                type: "get",
+                url: ajax_url,
+                contentType: "text/xml; charset=utf-8",
+                dataType: "xml",
+                error: function(xhr, status, error) {
+                    console.log("error : " + status + ", " + error);
+                    
+                },
+                success: function(xml) {
+                   //console.log(xml);
+                    //title in xml.title string or year matching
+                   
+                    $.each($(xml).find("item"), function(i, item) {
+                        var resultTitle = $(item).find("title").text();
+                        var subTitle = $(item).find("subtitle").text();
+                        var pubDate = $(item).find("pubDate").text();
+                        if(recommend === true && pubDate != year) {
+                            //console.log("pubDate false");
+                            return true;
+                        }
+                        
+                        if(resultTitle.toLowerCase() === title.toLowerCase() 
+                            || subTitle.toLowerCase() === title.toLowerCase()) {
+                            //console.log("Found it!!");
+                            
+                            if(show === true) {
+                                var link = $(item).find("link").text();
+                                var image = $(item).find("image");    
+                                var imgUrl = "";
+                                console.log(item);
+                                
+                                if(image.length > 1) {
+                                    var i = 0;
+                                    while(image[0].childNodes[i] === null) {
+                                        i++;
+                                        if(i === image.length) { i = -1; break; }
+                                    }
+                                    if(i != -1) {
+                                        imgUrl = image[0].childNodes[i].nodeValue;
+                                        
+                                    }
+                                } else {
+                                    imgUrl = $(image).text();
+            
+                                }
+                                //console.log(imgUrl);
+                                if(imgUrl === "") {
+                                    
+                                    
+                                    return true;
+                                }
+                                
+                                //$("#viewRecommendMovieLoading").hide();
+             
+                                var p = $("<div id='recommend_movie' class='recommend_movie'><a href='"
+                                 + link + "' target='_new'><div class='title'>" 
+                                 + title + "</div><img id ='poster_img' src='" 
+                                 + imgUrl + "' /></a></div>");
+                                $('#movies').append(p);
+                                p.fadeIn("slow");
+                                
+                            } 
+                            
+                            if(recommend === false) {
+                                                
+                                var actors = $(item).find("actor");
+                                var directors = $(item).find("director");
+                           
+                                 $.each(actors, function(i, actor) {
+                                    if(actor.childNodes[0] != null) {
+                                        var names = actor.childNodes[0].nodeValue;
+                                        
+                                        $.each(names.split("|"), function(j, name) {
+                                            if(name != "") {
+                                                //console.log(name);
+                                                var count = actorMap.get(name);
+                                                if(count == null) count = 0;
+                                                count++;
+                                                actorMap.put(name, count);
+                                            }
+                                        });
+                                    }
+                                });
+                                
+                                $.each(directors, function(i, director) {
+                                    if(director.childNodes[0] != null) {
+                                        var names = director.childNodes[0].nodeValue;
+                                        
+                                        $.each(names.split("|"), function(j, name) {
+                                            if(name != "") {
+                                                //console.log(name);
+                                                var count = directorMap.get(name);
+                                                if(count == null) count = 0;
+                                                count++;
+                                                directorMap.put(name, count);
+                                            }
+                                        });
+                                    }
+                                   
+                                });
+                            } // end of if(recommend === true)
+                        } // end of if(resultTitle.toLowerCase() === title.toLowerCase() 
+                          //  || subTitle.toLowerCase() === title.toLowerCase()) 
+   
+                    }); //end of $.each($(xml).find("item"), function(i, item)
+                } // end of success: function(xml)
+            }); // end of $.ajax({
+       }
+      
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '118179771643345', // App ID
+          //channelUrl : '//localhost/channel.html', // Channel File
+          status     : true, // check login status
+          //cookie     : true, // enable cookies to allow the server to access the session
+          xfbml      : true,  // parse XFBML
+          oauth      : true
+        });
+        
+   
+         FB.getLoginStatus(handSessionResponse);
+         
+         function handSessionResponse(response) {
+            
+            if(response.status == 'connected') {
+                access_token = response.authResponse.accessToken;
+                //alert(access_token);
+                //console.log(access_token);
+                fbMovieListFetch(access_token);
+            }
+            
+             
+        }
+         
+      };
+      
+      // Load the SDK Asynchronously
+      (function(d){
+         var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement('script'); js.id = id; js.async = true;
+         js.src = "//connect.facebook.net/en_US/all.js";
+         ref.parentNode.insertBefore(js, ref);
+       }(document));
+   
+     </script>
+    <head>
+        
+    </head>
+    <body>
+      
+    <div id="fb-root"></div>
+    <p>
+        <fb:profile-pic uid="loggedinuser" size="square"></fb:profile-pic>
+        <!-- 로그인한 이름 -->
+        <fb:name uid="loggedinuser" use-you="no"></fb:name>
+    </p>
+    <fb:login-button data-scope="user_likes" on-login="top.location.href='http://127.0.0.1/FacebookAPI.html'" autologoutlink="true"></fb:login-button>
+    <div class="next">
+        <div id="recommend" class="recommend" onclick="showResult();"><p>Show Result!!!</p></div>
+    </div>
+    
+    <div class="container">
+        <div id="viewRecommendMovieLoading" class="viewRecommendLoading">
+                    <img src="ajax-loader.gif">
+        </div>
+        <div id="viewRandomMovieLoading" class="viewRandomLoading">
+                    <img src="ajax-loader.gif">
+        </div>
+        <div id="movies" class="movies">
+            <div id="recommend_movie" class="recommend_movie"></div>
+            <div id="random_movie" class="random_movie"></div>
+        </div> 
+    </div> 
+<script>
+ 
+</script>
+    </body>
+    
+</html>
