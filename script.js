@@ -226,13 +226,13 @@ function showRandomMovieFromRank() {
 
 		},
 		success : function(html) {
-			console.log(html);
+			//console.log(html);
 			var p = $(html);
 
-			console.log(p);
+			//console.log(p);
 			var link = "http://movie.naver.com" + $(p).attr("href");
 			var title = $(p).text();
-			console.log(title);
+			//console.log(title);
 			var p = $("<div id='movie' class='movie'><div class='title'><a href='" + link + "' target='_new'>" + title + "</a></div><input type='hidden' value='' id='video_id' /><div id='show_trailer' class='show_trailer' onclick='showTrailer(1);'>Trailer</div><img id ='poster_img' src='' onclick='vote(1);' /'></div>");
 
 			$('#movies > #random_movie').append(p);
