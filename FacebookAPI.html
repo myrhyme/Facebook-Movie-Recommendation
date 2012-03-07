@@ -35,6 +35,7 @@
                 //console.log(access_token);
                 $("#profile").fadeIn("slow");
                 $("#description").fadeOut("slow");
+                userID = response.authResponse.userID;
                 fbMovieListFetch(access_token);
             } else {
             	
@@ -76,13 +77,32 @@
     </div>
     
     <div id="count_bar_bg" class="count_bar_bg">
+    	<div id="count_bar_default" class="count_bar_default">
+    	</div>
         <div id="count_bar" class="count_bar">
         	<div id="count" class='count'></div>
         </div>
     </div>
     
     <div class="container">
-    	<div id="description" class="description">EXPLAIN</div>
+    	<div id="description" class="description">
+    		<p>How To Use</p>
+    		<ol>
+    			<li>
+    				오른쪽 상단의 페이스북 로그인	
+    			</li>
+    			<li>
+    				Start 버튼을 눌러 진행
+    			</li>
+    			<li>
+    				두개의 추천 영화 중에서 마음에 드는 영화를 선택
+    			</li>
+    			<li>
+    				총 30번의 추천을 선택한 후 종료
+    			</li>
+    			
+    		</ol>
+    	</div>
     	<div id="start" class="start" onclick="showResult();">START</div>
         <div id="viewRecommendMovieLoading" class="viewRecommendLoading">
                     <img src="ajax-loader.gif">

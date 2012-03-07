@@ -70,14 +70,32 @@ body {
 }
 
 .description {
-	height:450px;
+	height:430px;
 	display:none;
-	background-color: #333333;
+	background-color: #67917A;
     -moz-border-radius: 40px;
 	border-radius: 40px;
 	color:#FFFFFF;
-	font-size:20pt;
+	font-family: 'Nothing You Could Do', cursive;
+	
+	padding:10px 10px;
+		
+}
+
+.description p {
+	
 	text-align:center;
+	font-size:25pt;
+	
+}
+
+.description ol {
+	font-size:20pt;
+	width:550px;
+	margin:0 auto;
+	list-style-type:decimal;	
+	text-align:left;
+	line-height:50px;
 }
 
 .movies {
@@ -192,26 +210,29 @@ body {
     margin-bottom:30px;
     
 }
+.count_bar_default {
+	width: 100%;
+    height: 5px;
+	background-color: #B8AF03;
+}
 
 .count_bar {
 	display:none;
 	width: 100%;
-    height: 50px;
-    margin:0 auto;
+    height: 45px;
 	background-color: #B8AF03;
-	float:left;
 		
 }
 
 .count {
 	width: 770px;
-	height:50px;
+	height:45px;
     font-size: 15pt;
 	margin:0  auto;
 	text-align:center;
 	font-family: 'Raleway', cursive;
 	color:#000000;
-	line-height: 50px;
+	line-height: 40px;
 	
 }
 
@@ -234,6 +255,14 @@ body {
 .start:hover {
 	background-color:#E33258;
 	cursor:pointer;	
+}
+
+.finish {
+	font-family: 'Nothing You Could Do', cursive;
+	color:#FFFFFF;
+	font-size:30pt;
+	text-align:center;
+	line-height: 450px
 }
 
 .trailer {

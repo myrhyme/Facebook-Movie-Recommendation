@@ -66,7 +66,8 @@ Map.prototype = {
 
 
 var access_token = "";
-        
+var userID = "";
+    
 var actorMap = new Map();
 var directorMap = new Map();
 var recommendMovieMap = new Map();
@@ -81,12 +82,12 @@ var sorted = [];
 var recommendMax = -1;
 var ytplayer;
 var showCount = 1;
-
+var voteCount = [0,0];
 function fbMovieListFetch(token) {
 	var url = "https://graph.facebook.com/me/movies?access_token=" + token + "&callback=?";
 	$.getJSON(url, function(json) {
 		var p = "";
-		console.log(json);
+		//console.log(json);
 		if(json === undefined || json === null) fbMovieListFetch(access_token);
 		else {
 			$.each(json.data, function(i, fb) {
@@ -109,13 +110,31 @@ var params = {
 }
 
 function vote(type) {
-	if(type === 0) {
-		
-	} else if(type === 1) {
-		
-	}
+	voteCount[type]++;
 	
 	showResult();
+}
+
+function saveResult() {
+	var params = {
+		"userID" : userID,
+		"recommendVote" : voteCount[0],
+		"randomVote" : voteCount[1]
+	};
+	
+	var q = $.param(params);
+	var ajax_url = "save_result.php?" + q;
+	$.ajax({
+		type : "get",
+		url : ajax_url,
+		error : function(xhr, status, error) {
+			//console.log("save result error : " + status + ", " + error);
+		},
+		success : function(html) {
+
+		}
+	});
+
 }
 
 function showResult() {
@@ -136,16 +155,25 @@ function showResult() {
 			showRecommendMovie(index++);
 			showRandomMovieFromRank();
 			showCount++;
-			var p = ("ROUND&nbsp;&nbsp;" + (showCount) + " / 30");
-			$("#count").html(p);
+			var p = "ROUND  " + (showCount) + " / 10";
+			$("#count").text(p);			
+		} else {
+			$("#versus").fadeOut("slow");
+			$("#random_movie").fadeOut('slow');
+			$("#recommend_movie").fadeOut('slow');
+			$("#count_bar").slideUp('slow', function(){
+				var p = $("<div id='finish' class='finish'>THANK YOU</div>")
+				$("#description").html(p);
+				$("#description").fadeIn("slow");
+			});
 			
-			
+			saveResult();
 		}
 	} else {
 		
 		$('#count_bar').slideDown('slow', function() {
-    		var p = ("ROUND&nbsp;&nbsp;1 / 30");
-			$("#count").html(p);
+    		var p = "ROUND  1 / 10";
+			$("#count").text(p);
 						
   		});
 		$("#start").fadeOut("fast");
@@ -173,11 +201,11 @@ function showResult() {
 				}
 				
 				getRecommendMovieFinished = true;
-				//console.log(sorted);
+				////console.log(sorted);
 				index = 0;
 				recommendMax = sorted.length;
-				if(recommendMax > 30)
-					recommendMax = 30;
+				if(recommendMax > 10)
+					recommendMax = 10;
 
 				showRecommendMovie(index++);
 				showRandomMovieFromRank();
@@ -194,15 +222,15 @@ function showRandomMovieFromRank() {
 		type : "get",
 		url : ajax_url,
 		error : function(xhr, status, error) {
-			console.log("error : " + status + ", " + error);
+			////console.log("showRandomMovieFromRank error : " + status + ", " + error);
 
 		},
 		success : function(html) {
-			// console.log(html);
+			// //console.log(html);
 			var p = $(html).find("table.list_ranking > tbody > tr > td.title > a");
 			p = p[Math.floor(Math.random() * 49)];
 
-			console.log(p);
+			////console.log(p);
 			var link = "http://movie.naver.com" + $(p).attr("href");
 			var title = $(p).text();
 
@@ -229,7 +257,7 @@ function getRandomMovieTrailer(link) {
 		type : "get",
 		url : ajax_url,
 		error : function(xhr, status, error) {
-			console.log("error : " + status + ", " + error);
+			//console.log("error : " + status + ", " + error);
 		},
 		success : function(html) {
 
@@ -246,7 +274,7 @@ function getRandomMovieTrailer(link) {
 
 function showRecommendMovie(i) {
 	if(getRecommendMovieFinished === true && sorted != undefined) {
-		console.log(sorted[i]);
+		//console.log(sorted[i]);
 		
 		if(i < recommendMax) {
 			var movie = sorted[i];
@@ -255,7 +283,7 @@ function showRecommendMovie(i) {
 			;
 			var year = filmInfo[0].substr(filmInfo[0].length - 5, 4);
 
-			//console.log(title + " " + year);
+			////console.log(title + " " + year);
 			//getMovieInfo(title, year, true, true);
 
 			var link = filmInfo[1];
@@ -277,18 +305,18 @@ function loadImage() {
 function getYoutubeMovie(title, year, type) {
 	var youTubeAPIKey = "AI39si7EHr3FOixi92r8WZVcgDMlZKVF_0-h95sR2hWkXngcfdf8zX2Ajnx9HbRo7ToWctvB0qu9MyKMH2a-x-PJ7LEf7OmCFg";
 	var url = "https://gdata.youtube.com/feeds/api/videos?key=" + youTubeAPIKey + "&q=" + title + "+" + year + "+trailer&orderby=relevance&max-results=10&v=2&alt=json-in-script&callback=?";
-	//console.log(url);
-	//console.log(encodeURI(url));
+	////console.log(url);
+	////console.log(encodeURI(url));
 	$.getJSON(url, function(json) {
 		var p = "";
-		//console.log(json);
+		////console.log(json);
 		var id;
 		if(json.feed.entry != null) {
 			$.each(json.feed.entry, function(i, entry) {
-				//console.log(entry.title.$t + " : " + entry.content.src);
+				////console.log(entry.title.$t + " : " + entry.content.src);
 			});
 			id = (json.feed.entry[0].id.$t).split(":");
-			//console.log(id);
+			////console.log(id);
 			if(type === "recommend")
 				$("#recommend_movie > #movie > #video_id").val(id[3]);
 			else if(type === "random")
@@ -341,7 +369,7 @@ function loadVideo(videoID) {
 		$(ytplayer).width(480);
 		$(ytplayer).height(295);
 
-		console.log("loadVideo");
+		//console.log("loadVideo");
 		ytplayer.loadVideoById(videoID);
 	} else {
 		// The video to load.
@@ -380,7 +408,7 @@ function getPosterImage(link, div, type) {
 		type : "get",
 		url : ajax_url,
 		error : function(xhr, status, error) {
-			console.log("error : " + status + ", " + error);
+			//console.log("error : " + status + ", " + error);
 		},
 		success : function(html) {
 
@@ -427,7 +455,7 @@ function getRecommendMovies(directors, actors) {
 	params.display = 5;
 
 	$.each(directors, function(i, director) {
-		//console.log(director[0]);
+		////console.log(director[0]);
 
 		if(i < directorMax) {
 			var factor = director[1];
@@ -440,7 +468,7 @@ function getRecommendMovies(directors, actors) {
 				contentType : "text/xml; charset=utf-8",
 				dataType : "xml",
 				error : function(xhr, status, error) {
-					console.log("error : " + status + ", " + error);
+					//console.log("error : " + status + ", " + error);
 
 				},
 				success : function(xml) {
@@ -449,7 +477,7 @@ function getRecommendMovies(directors, actors) {
 					$.each(filmo, function(i, film) {
 						var title = $(film).find("title").text();
 						var link = $(film).find("link").text();
-						//console.log(title);
+						////console.log(title);
 						var count = recommendMovieMap.get(title + "|" + link);
 						if(count == null)
 							count = 0;
@@ -463,7 +491,7 @@ function getRecommendMovies(directors, actors) {
 	});
 
 	$.each(actors, function(i, actor) {
-		//console.log(actor[0]);
+		////console.log(actor[0]);
 		if(i < actorMax) {
 
 			var factor = actor[1];
@@ -476,7 +504,7 @@ function getRecommendMovies(directors, actors) {
 				contentType : "text/xml; charset=utf-8",
 				dataType : "xml",
 				error : function(xhr, status, error) {
-					console.log("error : " + status + ", " + error);
+					//console.log("error : " + status + ", " + error);
 					
 				},
 				success : function(xml) {
@@ -485,7 +513,7 @@ function getRecommendMovies(directors, actors) {
 					$.each(filmo, function(i, film) {
 						var title = $(film).find("title").text();
 						var link = $(film).find("link").text();
-						//console.log(title);
+						////console.log(title);
 						var count = recommendMovieMap.get(title + "|" + link);
 						if(count == null)
 							count = 0;
@@ -520,11 +548,11 @@ function getMovieInfo(title, year, recommend, show) {
 		contentType : "text/xml; charset=utf-8",
 		dataType : "xml",
 		error : function(xhr, status, error) {
-			console.log("error : " + status + ", " + error);
+			//console.log("error : " + status + ", " + error);
 
 		},
 		success : function(xml) {
-			//console.log(xml);
+			////console.log(xml);
 			//title in xml.title string or year matching
 
 			$.each($(xml).find("item"), function(i, item) {
@@ -532,18 +560,18 @@ function getMovieInfo(title, year, recommend, show) {
 				var subTitle = $(item).find("subtitle").text();
 				var pubDate = $(item).find("pubDate").text();
 				if(recommend === true && pubDate != year) {
-					//console.log("pubDate false");
+					////console.log("pubDate false");
 					return true;
 				}
 
 				if(resultTitle.toLowerCase() === title.toLowerCase() || subTitle.toLowerCase() === title.toLowerCase()) {
-					//console.log("Found it!!");
+					////console.log("Found it!!");
 
 					if(show === true) {
 						var link = $(item).find("link").text();
 						var image = $(item).find("image");
 						var imgUrl = "";
-						console.log(item);
+						//console.log(item);
 
 						if(image.length > 1) {
 							var i = 0;
@@ -562,7 +590,7 @@ function getMovieInfo(title, year, recommend, show) {
 							imgUrl = $(image).text();
 
 						}
-						//console.log(imgUrl);
+						////console.log(imgUrl);
 						if(imgUrl === "") {
 
 							return true;
@@ -592,7 +620,7 @@ function getMovieInfo(title, year, recommend, show) {
 
 								$.each(names.split("|"), function(j, name) {
 									if(name != "") {
-										//console.log(name);
+										////console.log(name);
 										var count = actorMap.get(name);
 										if(count == null)
 											count = 0;
@@ -609,7 +637,7 @@ function getMovieInfo(title, year, recommend, show) {
 
 								$.each(names.split("|"), function(j, name) {
 									if(name != "") {
-										//console.log(name);
+										////console.log(name);
 										var count = directorMap.get(name);
 										if(count == null)
 											count = 0;
