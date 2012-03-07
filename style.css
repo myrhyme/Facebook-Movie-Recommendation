@@ -181,7 +181,6 @@ body {
 .title {
 	width:70%;
     height:50px;
-    text-overflow: clip;
     text-align: left;
     float:left;
     line-height:50px;
@@ -198,7 +197,7 @@ body {
     
     width: 330px;
     height: 420px;
-    border:dashed 0.1px;
+    
     margin-left:10px;
     cursor:pointer;
 }
