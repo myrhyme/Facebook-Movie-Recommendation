@@ -33,6 +33,7 @@
                         $('#movies').append(p);
                         p.fadeIn("slow");            
                         getPosterImage(link);
+                        getMovieTitleEng(link);
                        
                     }
           });        
@@ -52,9 +53,30 @@
                     console.log("error : " + status + ", " + error);
                 },
                 success: function(html) {
+                	//console.log(html);
                     var p = $(html).find("div.main_poster > span > a > img");
                     console.log(p.attr("src"));
                     $("#poster_img").attr("src", p.attr("src"));
+                    
+                }
+            });
+        }
+        
+        function getMovieTitleEng(link) {
+            var params = {"link":link};
+            var q = $.param(params);
+            var ajax_url = "NaverMovieInfo.php?" + q;
+            $.ajax({
+                type: "get",
+                url: ajax_url,
+                error: function(xhr, status, error) {
+                    console.log("error : " + status + ", " + error);
+                },
+                success: function(html) {
+                	
+                    var p = $(html).find("div.movie_spec > div.title_group > h2.title_eng");
+                    console.log(p.text());
+                    //$("#poster_img").attr("src", p.attr("src"));
                     
                 }
             });

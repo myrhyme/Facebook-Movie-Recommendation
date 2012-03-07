@@ -1,58 +1,159 @@
+body {
+	margin: 0;
+	width:100%;
+	font-family: 'Raleway', cursive, 'NanumGothicWeb';
+}
+
+.top {
+	width: 99%;
+	height: 70px;
+	background-color: #000000;
+	padding-top:10px;
+	padding-left:20px;
+	
+	 	
+}
+.logo {
+	float:left;
+	color:#FFFFFF;
+
+}
+
+.logo h1 {
+	font-size:20pt;
+	overflow:auto;
+	font-family: 'Nothing You Could Do', cursive;
+}
+
+.facebook {
+	float:right;
+	margin-right:20px;
+	font-family: 'Nothing You Could Do', cursive;
+}
+.top a {
+	
+	color:#FFFFFF;
+}
+
 .container {
-    width: 620px;
+    width: 770px;
+    margin: 0 auto;
+}
+
+.description {
+	height:450px;
+	display:none;
+	background-color: #333333;
+    -moz-border-radius: 40px;
+	border-radius: 40px;
+	color:#FFFFFF;
+	font-size:20pt;
+	text-align:center;
 }
 
 .movies {
-    width: 620px;
+    width: 750px;
+    margin: 0 auto;
     background-color: #FFFFFF;
+    padding:0;
 }
 
-.movies .recommend_movie {
+.recommend_movie {
+	float:left;
+
+	width: 350px;
+	height: 500px;
+	margin: 0;
+	padding: 0;
+}
+
+.random_movie {
+    float:right;
+
+	width: 350px;
+	height: 500px;
+	margin: 0;
+	padding: 0;
+}
+
+
+.versus {
+	
+	float:left;
+	width:50px;
+	height:450px;
+	text-align:center;
+	line-height:450px;
+	
+}
+
+.versus h2 {
+	display:none;
+	font-size:20pt;	
+}
+
+.recommend_movie .movie {
     display:none;
     float:left;
-    width: 300px;
+    width: 350px;
     height: 500px;
-    margin-left:auto;
-    margin-right:auto;
-    background-color: #eeeeee;
+    
+    background-color: #cecece;
+    -moz-border-radius: 15px;
+	border-radius: 15px;
 }
 
-.movies .random_movie {
+.random_movie .movie {
     display:none;
     float:right;
-    width: 300px;
+    width: 350px;
     height: 500px;
-    padding: 2px;
-    margin: 2px;
-    background-color: #eeeeee;
+   
+    background-color: #cecece;
+    -moz-border-radius: 15px;
+	border-radius: 15px;
+}
+
+.show_trailer {
+	width:20%;
+	font-size:10px;
+	height:50px;
+	float:right;
+	cursor:pointer;
+	color:#000000;
+	line-height:50px;
+	margin-right:5px;
+	
 }
 
 .title {
+	width:70%;
     height:50px;
-    font-size:15px;
     text-overflow: clip;
-    text-align: center;
-
+    text-align: left;
+    float:left;
+    line-height:50px;
+	margin-left:10px;
 }
 
-.center
-{
-    margin-left:auto;
-    margin-right:auto;
-    width:70%;
-    background-color:#b0e0e6;
+.title a {
+	color:#000000;
+	font-size:12pt;
+	vertical-align: bottom;
 }
 
 .movies img {
     
-    width: 300px;
-    height: 450px;
+    width: 330px;
+    height: 420px;
     border:dashed 0.1px;
+    margin-left:10px;
 }
 
 .next {
      width: 620px;
      height: 50px;
+     margin: 0 auto;
 }
 
 .recommend {
@@ -70,14 +171,13 @@
     cursor:pointer;
 }
 
-
 .viewRandomLoading {
     
     width:300px;
     height:450px;
     display:none;
     float:right;
-    background: #FFFFF0;
+    background: #FFFFFF;
     line-height: 450px;
     text-align:center;
      /*filter: alpha(opacity=60);
@@ -91,7 +191,7 @@
     height:450px;
     display:none;
     float:left;
-    background: #FFFFF0;
+    background: #FFFFFF;
     line-height: 450px;
     text-align:center;
 }
