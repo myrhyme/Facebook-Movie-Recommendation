@@ -356,6 +356,7 @@ function hideTrailer() {
 	$("#trailer").height(1);
 	$("#close_trailer").hide();
 	if(ytplayer != null) {
+			ytplayer.stopVideo();
 			$(ytplayer).width(1);
 			$(ytplayer).height(1);
 	}
@@ -382,7 +383,7 @@ function loadVideo(videoID) {
 			id : "ytPlayer"
 		};
 		// All of the magic handled by SWFObject (http://code.google.com/p/swfobject/)
-		swfobject.embedSWF("http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1", "youtube", "480", "295", "9", null, null, params, atts);
+		swfobject.embedSWF("http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1&autoplay=1", "youtube", "480", "295", "9", null, null, params, atts);
 
 	}
 }
