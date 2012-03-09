@@ -88,20 +88,7 @@ var gender="";
 var birthday = "";
 var totalCount = 10;
 
-if (!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function (obj, fromIndex) {
-    if (fromIndex == null) {
-        fromIndex = 0;
-    } else if (fromIndex < 0) {
-        fromIndex = Math.max(0, this.length + fromIndex);
-    }
-    for (var i = fromIndex, j = this.length; i < j; i++) {
-        if (this[i] === obj)
-            return i;
-    }
-    return -1;
-  };
-}
+
 
 function getUserProfile(token) {
 	var url = "https://graph.facebook.com/me?access_token=" + token + "&callback=?";
@@ -114,6 +101,7 @@ function getUserProfile(token) {
 		
 		//console.log(birthday);
 	});
+	
 }
 
 function fbMovieListFetch(token) {
@@ -192,14 +180,16 @@ function showResult() {
 	}
 	if(getRecommendMovieFinished === true) {
 		if(index < recommendMax) {
-			$("#versus").fadeOut("slow");
-			$("#viewRecommendMovieLoading").fadeIn(500);
-			$("#viewRandomMovieLoading").fadeIn(500);
-
 			$("#random_movie > #movie").remove();
 			$("#recommend_movie > #movie").remove();
 			$("#random_movie > #movie_info").remove();
 			$("#recommend_movie > #movie_info").remove();
+			
+			$("#versus").hide();
+			$("#viewRecommendMovieLoading").fadeIn(500);
+			$("#viewRandomMovieLoading").fadeIn(500);
+
+			
 
 			if(ytplayer != null) {
 				$(ytplayer).width(1);
@@ -245,14 +235,17 @@ function showResult() {
 						
   		});
   		$("#description").fadeOut("fast");
-		$("#start").fadeOut("fast");
+		$("#start").fadeOut("fast", function() {
+			$("#viewRecommendMovieLoading").fadeIn(500);
+			$("#viewRandomMovieLoading").fadeIn(500);
+		});
 		var sortedActors = actorMap.sort();
 		var sortedDirectors = directorMap.sort();
 		directorMax = sortedDirectors.length;
 		
 		console.log(actorMap);
 		console.log(directorMap);
-		console.log(likedMovies);
+		//console.log(likedMovies);
 		if(directorMax > 10)
 			directorMax = 10;
 		actorMax = sortedActors.length;
@@ -261,8 +254,7 @@ function showResult() {
 
 		getRecommendMovies(sortedDirectors, sortedActors);
 		
-		$("#viewRecommendMovieLoading").fadeIn(500);
-		$("#viewRandomMovieLoading").fadeIn(500);
+		
 
 		var myInterval = window.setInterval(function() {
 
@@ -511,8 +503,10 @@ function getPosterImage(link, div, type) {
 				if(type === "random") {
 					//showRandomMovieFromRank();
 					$("#random_movie > #movie").remove();
+					$("#random_movie > #movie_info").remove();
 				} else if(type === "recommend") {
 					$("#recommend_movie > #movie").remove();
+					$("#recommend_movie > #movie_info").remove();
 					recommendMax++;
 					if(recommendMax > sorted.length)
 						recommendMax = sorted.length;
@@ -553,14 +547,14 @@ function getRecommendMovies(directors, actors) {
 						var title = $(film).find("title").text();
 						var link = $(film).find("link").text();
 						
-						if(likedMovies.indexOf(title) === -1) {
+						if(likedMovies.indexOf(title.substring(0, title.lastIndexOf("("))) === -1) {
 							
 							var count = recommendMovieMap.get(title + "|" + link);
 							if(count == null)
 								count = 0;
 							count += 1 * factor;
 							recommendMovieMap.put(title + "|" + link, count);
-						} else console.log("likedMovieMap.containsKey(title) " + title);
+						}
 					});
 					directorCount++;
 				}
@@ -592,13 +586,13 @@ function getRecommendMovies(directors, actors) {
 						var title = $(film).find("title").text();
 						var link = $(film).find("link").text();
 						
-						if(likedMovies.indexOf(title) === -1) {
+						if(likedMovies.indexOf(title.substring(0, title.lastIndexOf("("))) === -1) {
 							var count = recommendMovieMap.get(title + "|" + link);
 							if(count == null)
 								count = 0;
 							count += 1 * factor;
 							recommendMovieMap.put(title + "|" + link, count);
-						} else console.log("likedMovies.indexOf(title) + " + title);
+						} 
 					});
 					actorCount++;
 				}
@@ -700,8 +694,6 @@ function getMovieInfo(title, year, recommend, show) {
 						var index = likedMovies.length - 1;
 						
 						likedMovies[index + 1] = resultTitle;
-						likedMovies[index + 2] = subTitle;
-						likedMovies[index + 3] = title;
 						
 						var actors = $(item).find("actor");
 						var directors = $(item).find("director");

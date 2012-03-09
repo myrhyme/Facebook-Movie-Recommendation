@@ -19,3 +19,9 @@
 1337513821|male|undefined|0|0
 1337513821|male|undefined|0|0
 1337513821|male|undefined|0|0
+1337513821|male|undefined|10|0
+1337513821|male|undefined|7|3
+1337513821|male|undefined|4|6
+1337513821|male|undefined|4|6
+1337513821|male|undefined|6|4
+1337513821|male|undefined|1|9

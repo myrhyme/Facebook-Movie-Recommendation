@@ -155,7 +155,7 @@ body {
 .movies {
     width: 770px;
     margin: 0 auto;
-    background-color: #FFFFFF;
+   
     padding:0;
 }
 
@@ -334,7 +334,7 @@ body {
 
 .end {
 	display:none;
-
+	cursor:pointer;
 	margin: 100px auto;
 	width:300px;
 	height:80px;
@@ -346,6 +346,11 @@ body {
 }
 
 .start:hover {
+	background-color:#FF0000;
+	cursor:pointer;	
+}
+
+.end:hover {
 	background-color:#FF0000;
 	cursor:pointer;	
 }
