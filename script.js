@@ -71,6 +71,7 @@ var userID = "";
 var actorMap = new Map();
 var directorMap = new Map();
 var recommendMovieMap = new Map();
+var likedMovies = new Array();
 var sortedActors, sortedDirectors;
 var getRecommendMovieFinished = false;
 var directorCount = 0;
@@ -83,18 +84,63 @@ var recommendMax = -1;
 var ytplayer;
 var showCount = 1;
 var voteCount = [0,0];
+var gender="";
+var birthday = "";
+var totalCount = 10;
+
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function (obj, fromIndex) {
+    if (fromIndex == null) {
+        fromIndex = 0;
+    } else if (fromIndex < 0) {
+        fromIndex = Math.max(0, this.length + fromIndex);
+    }
+    for (var i = fromIndex, j = this.length; i < j; i++) {
+        if (this[i] === obj)
+            return i;
+    }
+    return -1;
+  };
+}
+
+function getUserProfile(token) {
+	var url = "https://graph.facebook.com/me?access_token=" + token + "&callback=?";
+	$.getJSON(url, function(json) {
+			
+		console.log(json);
+		userID = json.id;
+		gender = json.gender;
+		birthday = json.birthday;
+		
+		//console.log(birthday);
+	});
+}
+
 function fbMovieListFetch(token) {
+	if(token === null) {
+		location.reload();
+		return;
+	}
 	var url = "https://graph.facebook.com/me/movies?access_token=" + token + "&callback=?";
 	$.getJSON(url, function(json) {
 		var p = "";
-		//console.log(json);
-		if(json === undefined || json === null) fbMovieListFetch(access_token);
+		console.log(json);
+		if(json === undefined || json === null) {
+			console.log("fbMovieListFetch undefined")
+			fbMovieListFetch(access_token);
+		}
 		else {
-			$.each(json.data, function(i, fb) {
-				getMovieInfo(fb.name, null, false, false);
-			});
+			if(json.data.length === 0) {
+				alert("Facebook에 영화 정보가 없습니다. 영화들을 Like 한 후에 다시 시도 해 주세요^^");
+				
+			} else {
 			
-			$("#start").fadeIn("slow");	
+				$.each(json.data, function(i, fb) {
+					getMovieInfo(fb.name, null, false, false);
+				});
+			}
+			
+			
 		}	
 		
 		
@@ -118,6 +164,8 @@ function vote(type) {
 function saveResult() {
 	var params = {
 		"userID" : userID,
+		"gender" : gender,
+		"birthday" : birthday,
 		"recommendVote" : voteCount[0],
 		"randomVote" : voteCount[1]
 	};
@@ -138,6 +186,10 @@ function saveResult() {
 }
 
 function showResult() {
+	if(access_token === "") {
+		alert("Facebook에 로그인 해주세요.");
+		return;
+	}
 	if(getRecommendMovieFinished === true) {
 		if(index < recommendMax) {
 			$("#versus").fadeOut("slow");
@@ -164,24 +216,43 @@ function showResult() {
 			$("#random_movie").fadeOut('slow');
 			$("#recommend_movie").fadeOut('slow');
 			$("#count_bar").slideUp('slow', function(){
-				var p = $("<div id='finish' class='finish'>THANK YOU</div>")
-				$("#description").html(p);
+				var p ="";
+				if(voteCount[1] <= 3) 
+					p = $("<p>당신은 어두운 세상에 소금같은 사람!</p><ul class='result_message'><li>일처리에 신중하며 책임감이 강하다.</li><li>보수적인 경향이 있으며 문제 해결시 과거 경험을 잘 적용하다.</li><li>매사에 철저하고 사리 분별력이 뛰어나다.</li></ul>");
+				else if(voteCount[1] <= 7)
+					p = $("<p>당신은 더 나은 세상을 꿈꾸는 몽상가!</p><ul class='result_message'><li>독창적이며 창의력이 풍부하고 넓은 안목을 갖고 있으며 다방면에 재능이 많다.</li><li>풍부한 상상력과 새로운 일을 시도하는 솔선력이 강하며 논리적이다.</li></ul>");
+				else
+					p = $("<p>당신은 호기심이 풍부한 아이디어 뱅크!</p><ul class='result_message'><li>과묵하나 관심이 있는 분야에 대해서는 말을 잘하며 이해가 빠르다.</li><li>높은 직관력으로 통찰하는 재능과 지적 호기심이 많다.</li><li>매우 분석적이며 논리적이다.</li></ul>");
+				$("#description > #message").html(p);
+				$("#end").fadeIn("slow");
+
 				$("#description").fadeIn("slow");
 			});
 			
 			saveResult();
 		}
 	} else {
-		
+		if(actorMap.length === 0 && directorMap.length === 0) {
+			//fbMovieListFetch();
+			alert("페이스북에 'Like'영화 정보를 가져올 수 없습니다. 다시 시도해 주세요.");
+			return;
+			
+		}
+			
 		$('#count_bar').slideDown('slow', function() {
     		var p = "ROUND  1 / 10";
 			$("#count").text(p);
 						
   		});
+  		$("#description").fadeOut("fast");
 		$("#start").fadeOut("fast");
 		var sortedActors = actorMap.sort();
 		var sortedDirectors = directorMap.sort();
 		directorMax = sortedDirectors.length;
+		
+		console.log(actorMap);
+		console.log(directorMap);
+		console.log(likedMovies);
 		if(directorMax > 10)
 			directorMax = 10;
 		actorMax = sortedActors.length;
@@ -198,7 +269,9 @@ function showResult() {
 			if(directorCount == directorMax && actorCount == actorMax) {
 				clearInterval(myInterval);
 				sorted = recommendMovieMap.sort();
-				if(sorted === undefined) {
+
+				if(sorted === undefined || sorted.length === 0 ) {
+					console.log("(sorted === undefined)");
 					showResult();	
 				}
 				
@@ -206,8 +279,8 @@ function showResult() {
 				////console.log(sorted);
 				index = 0;
 				recommendMax = sorted.length;
-				if(recommendMax > 10)
-					recommendMax = 10;
+				if(recommendMax > totalCount)
+					recommendMax = totalCount;
 
 				showRecommendMovie(index++);
 				showRandomMovieFromRank();
@@ -319,15 +392,15 @@ function getYoutubeMovie(title, year, type) {
 			id = (json.feed.entry[0].id.$t).split(":");
 			////console.log(id);
 			if(type === "recommend")
-				$("#recommend_movie > #movie > #video_id").val(id[3]);
+				$("#recommend_movie > #movie_info > #video_id").val(id[3]);
 			else if(type === "random")
-				$("#random_movie > #movie > #video_id").val(id[3]);
+				$("#random_movie > #movie_info > #video_id").val(id[3]);
 			//loadVideo(id[3]);
 		} else {
 			if(type === "recommend")
-				$("#recommend_movie > #movie > #show_trailer").hide();
+				$("#recommend_movie > #movie_info > #show_trailer").hide();
 			else if(type === "random")
-				$("#random_movie > #movie > #show_trailer").hide();
+				$("#random_movie > #movie_info > #show_trailer").hide();
 		}
 	});
 }
@@ -336,11 +409,13 @@ function showTrailer(type) {
 
 	var videoId = "";
 	if(type === 0)
-		videoId = $("#recommend_movie > #movie > #video_id").val();
+		videoId = $("#recommend_movie > #movie_info > #video_id").val();
 	else if(type === 1)
-		videoId = $("#random_movie > #movie > #video_id").val();
+		videoId = $("#random_movie > #movie_info > #video_id").val();
 
 	if(videoId != "") {
+		var w = $(document).width();
+		console.log(w);
 		$("#trailer").width('100%');
 		$("#trailer").height('100%');
 		$("#trailer").show();
@@ -361,7 +436,6 @@ function hideTrailer() {
 			$(ytplayer).width(1);
 			$(ytplayer).height(1);
 	}
-	
 }
 
 // Loads the selected video into the player.
@@ -478,12 +552,15 @@ function getRecommendMovies(directors, actors) {
 					$.each(filmo, function(i, film) {
 						var title = $(film).find("title").text();
 						var link = $(film).find("link").text();
-						////console.log(title);
-						var count = recommendMovieMap.get(title + "|" + link);
-						if(count == null)
-							count = 0;
-						count += 1 * factor;
-						recommendMovieMap.put(title + "|" + link, count);
+						
+						if(likedMovies.indexOf(title) === -1) {
+							
+							var count = recommendMovieMap.get(title + "|" + link);
+							if(count == null)
+								count = 0;
+							count += 1 * factor;
+							recommendMovieMap.put(title + "|" + link, count);
+						} else console.log("likedMovieMap.containsKey(title) " + title);
 					});
 					directorCount++;
 				}
@@ -514,12 +591,14 @@ function getRecommendMovies(directors, actors) {
 					$.each(filmo, function(i, film) {
 						var title = $(film).find("title").text();
 						var link = $(film).find("link").text();
-						////console.log(title);
-						var count = recommendMovieMap.get(title + "|" + link);
-						if(count == null)
-							count = 0;
-						count += 1 * factor;
-						recommendMovieMap.put(title + "|" + link, count);
+						
+						if(likedMovies.indexOf(title) === -1) {
+							var count = recommendMovieMap.get(title + "|" + link);
+							if(count == null)
+								count = 0;
+							count += 1 * factor;
+							recommendMovieMap.put(title + "|" + link, count);
+						} else console.log("likedMovies.indexOf(title) + " + title);
 					});
 					actorCount++;
 				}
@@ -560,6 +639,9 @@ function getMovieInfo(title, year, recommend, show) {
 				var resultTitle = $(item).find("title").text();
 				var subTitle = $(item).find("subtitle").text();
 				var pubDate = $(item).find("pubDate").text();
+				
+				
+				
 				if(recommend === true && pubDate != year) {
 					////console.log("pubDate false");
 					return true;
@@ -568,7 +650,10 @@ function getMovieInfo(title, year, recommend, show) {
 				if(resultTitle.toLowerCase() === title.toLowerCase() || subTitle.toLowerCase() === title.toLowerCase()) {
 					////console.log("Found it!!");
 
-					if(show === true) {
+					
+					/*
+					 
+					 if(show === true) {
 						var link = $(item).find("link").text();
 						var image = $(item).find("image");
 						var imgUrl = "";
@@ -598,7 +683,7 @@ function getMovieInfo(title, year, recommend, show) {
 						}
 
 						//$("#viewRecommendMovieLoading").hide();
-						/*
+						
 
 						 var p = $("<div id='recommend_movie' class='recommend_movie'><a href='"
 						 + link + "' target='_new'><div class='title'>"
@@ -606,12 +691,18 @@ function getMovieInfo(title, year, recommend, show) {
 						 + imgUrl + "' /></a></div>");
 						 $('#movies').append(p);
 						 p.fadeIn("slow");
-						 */
+						 
 
 					}
-
+					*/
+					
 					if(recommend === false) {
-
+						var index = likedMovies.length - 1;
+						
+						likedMovies[index + 1] = resultTitle;
+						likedMovies[index + 2] = subTitle;
+						likedMovies[index + 3] = title;
+						
 						var actors = $(item).find("actor");
 						var directors = $(item).find("director");
 
@@ -622,9 +713,10 @@ function getMovieInfo(title, year, recommend, show) {
 								$.each(names.split("|"), function(j, name) {
 									if(name != "") {
 										////console.log(name);
-										var count = actorMap.get(name);
-										if(count == null)
-											count = 0;
+										var count = 0;
+										if(actorMap.containsKey(name) === true) { 
+										 count = actorMap.get(name);
+										} 
 										count++;
 										actorMap.put(name, count);
 									}
@@ -639,9 +731,11 @@ function getMovieInfo(title, year, recommend, show) {
 								$.each(names.split("|"), function(j, name) {
 									if(name != "") {
 										////console.log(name);
-										var count = directorMap.get(name);
-										if(count == null)
-											count = 0;
+										var count = 0;
+										if(directorMap.containsKey(name) === true) { 
+										 count = directorMap.get(name);
+										} 
+										
 										count++;
 										directorMap.put(name, count);
 									}
