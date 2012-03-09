@@ -1,14 +1,13 @@
 body {
 	margin: 0;
-	font-family: 'Raleway', cursive, 'NanumGothicWeb';
-	background-color: #CCBF82;
+	font-family: 'NanumGothicWeb';
 	min-width:1000px;
 }
 
 .top {
 	width: 95%;
 	height: 60px;
-	background-color: #170409;
+	background-color: #000000;
 	padding-top:10px;
 	padding-bottom:10px;
 	padding-left:2.5%;
@@ -20,21 +19,18 @@ body {
 	float:left;
 	color:#FFFFFF;
 	font-size:25pt;
-	font-family: 'Nothing You Could Do', cursive;
-	background-color: #170409;
+	background-color: #000000;
 	line-height: 60px;
 }
 
 .logo .pick {
-	color:#E33258;
+	color:#FF0000;
 	
 }
+
 .facebook {
 	
 	float:right;
-	
-	font-family: 'Nothing You Could Do', cursive;
-	
 	height:50px;
 	text-align:right;
 	width:220px;
@@ -59,8 +55,7 @@ body {
 	height:25px;
 }
 
-.top a {
-	
+.top a {	
 	color:#FFFFFF;
 }
 
@@ -72,12 +67,8 @@ body {
 .description {
 	height:430px;
 	display:none;
-	background-color: #67917A;
-    -moz-border-radius: 40px;
-	border-radius: 40px;
-	color:#FFFFFF;
-	font-family: 'Nothing You Could Do', cursive;
-	
+	background-color: #FFFFFF;
+	color:#262626;	
 	padding:10px 10px;
 		
 }
@@ -109,7 +100,7 @@ body {
 	display:none;
 	float:left;
 	width: 350px;
-	height: 500px;
+	
 	margin: 0;
 	padding: 0;
 }
@@ -118,7 +109,7 @@ body {
 	display:none;
     float:right;
 	width: 350px;
-	height: 500px;
+	
 	margin: 0;
 	padding: 0;
 }
@@ -135,70 +126,98 @@ body {
 }
 
 .versus h2 {
-	font-size:20pt;	
+	font-size:20pt;
+	color:#262626;
 }
 
 .recommend_movie .movie {
     display:none;
     float:left;
     width: 350px;
-    height: 500px;
+    height: 440px;
     
-    background-color: #cecece;
-    -moz-border-radius: 15px;
-	border-radius: 15px;
+    background-color: #FFFFFF;
+    
 }
 
 .recommend_movie .movie:hover {
-	background-color: #E33258;	
+	background-color: #FF0000;	
 }
 .random_movie .movie:hover {
-	background-color: #E33258;
+	background-color: #FF0000;
 }
 
 .random_movie .movie {
     display:none;
     float:right;
     width: 350px;
-    height: 500px;
+    height: 440px;
    
-    background-color: #cecece;
-    -moz-border-radius: 15px;
-	border-radius: 15px;
+    background-color: #FFFFFF;
+}
+
+.movie_info {
+    display:none;
+
+	width: 350px;
+
 }
 
 .show_trailer {
-	
-	font-size:10pt;
-	height:50px;
+	text-align: center;
+	font-size:12pt;
+	width:160px;
+	height:30px;
 	float:right;
+	margin-right:10px;
 	cursor:pointer;
-	color:#000000;
-	line-height:50px;
-	margin-right:10px;	
+	color:#FFFFFF;
+	line-height:30px;
+	background-color:#3C3C3C;
+}
+
+.show_trailer:hover {
+	background-color:#FF0000;
 }
 
 .title {
-	width:70%;
-    height:50px;
-    text-align: left;
+	width:100%;
+    height:40px;
+    text-align: center;
+    line-height:40px;
     float:left;
-    line-height:50px;
-	margin-left:10px;
+    font-size:14pt;
+	background-color:#FFFFFF;
 }
 
-.title a {
-	color:#000000;
+.link a {
+	color:#FFFFFF;
 	font-size:12pt;
-	vertical-align: bottom;
 }
+
+.link {
+	text-align: center;
+	width:160px;
+	margin-left:10px;
+	height:30px;
+	float:left;
+	cursor:pointer;
+	color:#FFFFFF;
+	line-height:30px;
+	background-color:#3C3C3C;
+}
+
+.link:hover {
+	background-color:#FF0000;
+}
+
 
 .movies img {
     
     width: 330px;
     height: 420px;
     
-    margin-left:10px;
+    margin:10px;
     cursor:pointer;
 }
 
@@ -212,14 +231,14 @@ body {
 .count_bar_default {
 	width: 100%;
     height: 5px;
-	background-color: #B8AF03;
+	background-color: #FF0000;
 }
 
 .count_bar {
 	display:none;
 	width: 100%;
     height: 45px;
-	background-color: #B8AF03;
+	background-color: #FF0000;
 		
 }
 
@@ -229,21 +248,16 @@ body {
     font-size: 15pt;
 	margin:0  auto;
 	text-align:center;
-	font-family: 'Raleway', cursive;
-	color:#000000;
+	color:#393939;
 	line-height: 40px;
-	
 }
 
 .start {
-	font-family: 'Nothing You Could Do', cursive;
 	margin: 100px auto;
 	width:400px;
 	height:300px;
 	display:none;
-	background-color: #67917A;
-    -moz-border-radius: 40px;
-	border-radius: 40px;
+	background-color: #3C3C3C;
 	color:#FFFFFF;
 	font-size:30pt;
 	text-align:center;
@@ -252,13 +266,12 @@ body {
 }
 
 .start:hover {
-	background-color:#E33258;
+	background-color:#FF0000;
 	cursor:pointer;	
 }
 
 .finish {
-	font-family: 'Nothing You Could Do', cursive;
-	color:#FFFFFF;
+	color:#262626;
 	font-size:30pt;
 	text-align:center;
 	line-height: 450px
@@ -290,7 +303,7 @@ body {
     height:450px;
     display:none;
     float:right;
-    background-color: #CCBF82;
+    background-color: #FFFFFF;
     line-height: 450px;
     text-align:center;
      /*filter: alpha(opacity=60);
@@ -304,7 +317,7 @@ body {
     height:450px;
     display:none;
     float:left;
-    background-color: #CCBF82;
+    background-color: #FFFFFF;
     line-height: 450px;
     text-align:center;
 }

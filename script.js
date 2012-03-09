@@ -146,6 +146,8 @@ function showResult() {
 
 			$("#random_movie > #movie").remove();
 			$("#recommend_movie > #movie").remove();
+			$("#random_movie > #movie_info").remove();
+			$("#recommend_movie > #movie_info").remove();
 
 			if(ytplayer != null) {
 				$(ytplayer).width(1);
@@ -233,7 +235,7 @@ function showRandomMovieFromRank() {
 			var link = "http://movie.naver.com" + $(p).attr("href");
 			var title = $(p).text();
 			//console.log(title);
-			var p = $("<div id='movie' class='movie'><div class='title'><a href='" + link + "' target='_new'>" + title + "</a></div><input type='hidden' value='' id='video_id' /><div id='show_trailer' class='show_trailer' onclick='showTrailer(1);'>Trailer</div><img id ='poster_img' src='' onclick='vote(1);' /'></div>");
+			var p = $("<div id='movie' class='movie'><img id ='poster_img' src='' onclick='vote(1);' /'></div><div id='movie_info' class='movie_info'><div class='title'>" + title + "</div><div class='link'><a href='" + link + "' target='_new'>영화정보 보기</a></div><input type='hidden' value='' id='video_id' /><div id='show_trailer' class='show_trailer' onclick='showTrailer(1);'>트레일러 보기</div></div>");
 
 			$('#movies > #random_movie').append(p);
 
@@ -287,7 +289,7 @@ function showRecommendMovie(i) {
 
 			var link = filmInfo[1];
 			//$("#viewRecommendMovieLoading").hide();
-			var p = $("<div id='movie' class='movie'><div class='title'><a href='" + link + "' target='_new'>" + title + "</a></div><input type='hidden' value='' id='video_id' /><div id='show_trailer' class='show_trailer' onclick='showTrailer(0);'>Trailer</div><img id ='poster_img' src=''onclick='vote(0);' /></div>");
+			var p = $("<div id='movie' class='movie'><img id ='poster_img' src='' onclick='vote(0);' /'></div><div id='movie_info' class='movie_info'><div class='title'>" + title + "</div><div class='link'><a href='" + link + "' target='_new'>영화정보 보기</a></div><input type='hidden' value='' id='video_id' /><div id='show_trailer' class='show_trailer' onclick='showTrailer(0);'>트레일러 보기</div></div>");
 
 			$('#movies > #recommend_movie').append(p);
 
@@ -327,7 +329,6 @@ function getYoutubeMovie(title, year, type) {
 			else if(type === "random")
 				$("#random_movie > #movie > #show_trailer").hide();
 		}
-
 	});
 }
 
