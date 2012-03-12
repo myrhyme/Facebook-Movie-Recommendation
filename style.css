@@ -153,7 +153,6 @@ body {
 .movies {
     width: 800px;
     margin: 0 auto;
-   
     padding:0;
 }
 
@@ -161,7 +160,6 @@ body {
 	display:none;
 	float:left;
 	width: 350px;
-	
 	margin: 0;
 	padding: 0;
 }
@@ -170,7 +168,6 @@ body {
 	display:none;
     float:right;
 	width: 350px;
-	
 	margin: 0;
 	padding: 0;
 }
@@ -183,7 +180,6 @@ body {
 	height:450px;
 	text-align:center;
 	line-height:450px;
-	
 }
 
 .versus h2 {
@@ -299,7 +295,7 @@ body {
 }
 
 
-.movies img {    
+.movies img.poster_img {    
     width: 330px;
     height: 420px;
     
@@ -421,28 +417,29 @@ body {
 
 .viewRandomLoading {
     
-    width:300px;
-    height:450px;
     display:none;
     float:right;
+    width: 350px;
+    height: 440px;
+    margin:0 auto;
     background-color: #FFFFFF;
-    line-height: 450px;
-    text-align:center;
-     /*filter: alpha(opacity=60);
+  	
+  	    /*filter: alpha(opacity=60);
     opacity: alpha*0.6;*/
 }
 
+.movies img.loader {
+	width:30px;
+	height:30px;
+	margin:205px 160px;
+}
 
 .viewRecommendLoading {
     
-    width:300px;
-    height:450px;
     display:none;
     float:left;
+    width: 350px;
+    height: 440px;
+    
     background-color: #FFFFFF;
-    line-height: 450px;
-    text-align:center;
 }
-
-
-

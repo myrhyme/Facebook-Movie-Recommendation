@@ -88,6 +88,7 @@ var voteCount = [0,0];
 var gender="";
 var birthday = "";
 var totalCount = 10;
+var facebookLikeTotal = 0;
 
 $(document).ready(function() {
 	if (!Array.prototype.indexOf) { 
@@ -141,7 +142,7 @@ function fbMovieListFetch(token) {
 				alert("Facebook에 영화 정보가 없습니다. 영화들을 Like 한 후에 다시 시도 해 주세요^^");
 				
 			} else {
-			
+				facebookLikeTotal = json.data.length;
 				$.each(json.data, function(i, fb) {
 					getMovieInfo(fb.name, null, false, false);
 				});
@@ -169,7 +170,7 @@ function saveResult() {
 		"userID" : userID,
 		"gender" : gender,
 		"birthday" : birthday,
-		"likedMovieCount" : likedMovies.length, 
+		"likedMovieCount" : facebookLikeTotal, 
 		"recommendVote" : voteCount[0],
 		"randomVote" : voteCount[1]
 	};
@@ -203,10 +204,14 @@ function showResult() {
 			$("#random_movie > #movie_info").remove();
 			
 			$("#versus").hide();
-			$("#viewRecommendMovieLoading").fadeIn(500);
-			$("#viewRandomMovieLoading").fadeIn(500);
-
 			
+			var pRandom = $("<div id='viewRandomMovieLoading' class='viewRandomMovieLoading'><img src='ajax-loader.gif' class='loader' /></div>");
+			var pRecommend = $("<div id='viewRecommendMovieLoading' class='viewRecommendLoading'><img src='ajax-loader.gif' class='loader' /></div>");
+			$("#random_movie").html(pRandom);
+			$("#recommend_movie").html(pRecommend);
+			pRandom.fadeIn(500);
+			pRecommend.fadeIn(500);
+				
 
 			if(ytplayer != null) {
 				$(ytplayer).width(1);
@@ -253,9 +258,15 @@ function showResult() {
   		});
   		$("#description").fadeOut("fast");
 		$("#start").fadeOut("fast", function() {
-			$("#viewRecommendMovieLoading").fadeIn(500);
-			$("#viewRandomMovieLoading").fadeIn(500);
+			var pRandom = $("<div id='viewRandomMovieLoading' class='viewRandomMovieLoading'><img src='ajax-loader.gif' class='loader' /></div>");
+			var pRecommend = $("<div id='viewRecommendMovieLoading' class='viewRecommendLoading'><img src='ajax-loader.gif' class='loader' /></div>");
+			$("#recommend_movie").html(pRecommend).show();
+			$("#random_movie").html(pRandom).show();			
+			
+			pRandom.fadeIn(500);
+			pRecommend.fadeIn(500);
 		});
+		
 		
 		var sortedActors = actorMap.sort();
 		var sortedDirectors = directorMap.sort();
@@ -311,7 +322,7 @@ function showRandomMovieFromRank() {
 
 		},
 		success : function(html) {
-			//console.log(html);
+			console.log(html);
 			var result = $(html).find("a");
 			var link = "http://movie.naver.com" + $(result).attr("href").replace("http://" + window.location.hostname, "");
 			var title = $(result).text();
@@ -320,7 +331,7 @@ function showRandomMovieFromRank() {
 				////console.log(p);
 				
 				////console.log(title);
-				var p = $("<div id='movie' class='movie'><a href='#' onclick='vote(1);'><img id ='poster_img' src='' /></a></div><div id='movie_info' class='movie_info'><div class='title'>" + title + "</div><div class='movie_link'><a href='" + link + "' target='_new'>영화정보 보기</a></div><input type='hidden' value='' id='random_movie_id' name='random_movie_id' /><div id='show_trailer' class='show_trailer'><a href='#' onclick='showTrailer(1);'>트레일러 보기</a></div></div>");
+				var p = $("<div id='movie' class='movie'><a href='#' onclick='vote(1);'><img class='poster_img' id ='poster_img' src='' /></a></div><div id='movie_info' class='movie_info'><div class='title'>" + title + "</div><div class='movie_link'><a href='" + link + "' target='_new'>영화정보 보기</a></div><input type='hidden' value='' id='random_movie_id' name='random_movie_id' /><div id='show_trailer' class='show_trailer'><a href='#' onclick='showTrailer(1);'>트레일러 보기</a></div></div>");
 				//console.log(link);
 				$('#movies > #random_movie').append(p);
 				
@@ -328,8 +339,9 @@ function showRandomMovieFromRank() {
 	
 				getRandomMovieTrailer(link);
 				randomMoviesShowed.push(title);
-				//console.log(randomMoviesShowed);
+				//
 			} else {
+				console.log(randomMoviesShowed);
 				showRandomMovieFromRank();				
 			}
 		}
@@ -378,7 +390,7 @@ function showRecommendMovie(i) {
 
 			var link = filmInfo[1];
 			//$("#viewRecommendMovieLoading").hide();
-			var p = $("<div id='movie' class='movie'><a href='#' onclick='vote(0);'><img id ='poster_img' src='' /></a></div><div id='movie_info' class='movie_info'><div class='title'>" + title + "</div><div class='movie_link'><a href='" + link + "' target='_new'>영화정보 보기</a></div><input type='hidden' value='' id='recommend_movie_id' name='recommend_movie_id' /><div id='show_trailer' class='show_trailer'><a href='#' onclick='showTrailer(0);'>트레일러 보기</a></div></div>");
+			var p = $("<div id='movie' class='movie'><a href='#' onclick='vote(0);'><img class='poster_img' id ='poster_img' src='' /></a></div><div id='movie_info' class='movie_info'><div class='title'>" + title + "</div><div class='movie_link'><a href='" + link + "' target='_new'>영화정보 보기</a></div><input type='hidden' value='' id='recommend_movie_id' name='recommend_movie_id' /><div id='show_trailer' class='show_trailer'><a href='#' onclick='showTrailer(0);'>트레일러 보기</a></div></div>");
 
 			$('#movies > #recommend_movie').append(p);
 
@@ -521,11 +533,11 @@ function getPosterImage(link, div, type) {
 				$(div).find("img").attr("src", src);
 				//+ "?type=m210");
 				if(type === "random") {
-					$("#viewRandomMovieLoading").hide();
+					$("#viewRandomMovieLoading").remove();
 					$("#random_movie").show();
 				}
 				else if(type === "recommend") {
-					$("#viewRecommendMovieLoading").hide();
+					$("#viewRecommendMovieLoading").remove();
 					$("#recommend_movie").show();
 				}
 				
