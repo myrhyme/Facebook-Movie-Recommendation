@@ -1,7 +1,7 @@
 body {
 	margin: 0;
 	font-family: 'NanumGothicBoldWeb';
-	min-width:1000px;
+	min-width:800px;
 }
 
 .top {
@@ -70,7 +70,7 @@ body {
 	float:right;
 	height:50px;
 	text-align:right;
-	width:220px;
+	width:230px;
 	padding: 5px 0;
 }
 
@@ -78,7 +78,7 @@ body {
 	display:none;
 	float:left;
 	text-align:right;
-	margin-left:10px;
+	margin-left:20px;
 	height: 60px;
 	
 }
@@ -95,14 +95,11 @@ body {
 
 .top a {	
 	color:#FFFFFF;
-}
-
-.top a:link {
 	text-decoration: none;
 }
 
 .container {
-    width: 770px;
+    width: 800px;
     margin: 0 auto;
 }
 
@@ -152,8 +149,9 @@ body {
 .description ul.result_message li {
 	margin-bottom:5px;
 }
+
 .movies {
-    width: 770px;
+    width: 800px;
     margin: 0 auto;
    
     padding:0;
@@ -181,7 +179,7 @@ body {
 .versus {
 	display:none;
 	float:left;
-	width:70px;
+	width:90px;
 	height:450px;
 	text-align:center;
 	line-height:450px;
@@ -203,11 +201,16 @@ body {
     
 }
 
-.recommend_movie .movie:hover {
-	background-color: #FF0000;	
+.recommend_movie .movie a {
+	width: 100%;
+	height: 100%;
+	display: block;
+	color:#FFFFFF;
+	text-decoration: none;
 }
-.random_movie .movie:hover {
-	background-color: #FF0000;
+
+.recommend_movie .movie a:hover {
+	background-color:#FF0000;
 }
 
 .random_movie .movie {
@@ -219,11 +222,22 @@ body {
     background-color: #FFFFFF;
 }
 
+.random_movie .movie a, a:link {
+	width: 100%;
+	height: 100%;
+	display: block;
+	color:#FFFFFF;
+	text-decoration: none;
+}
+
+.random_movie .movie a:hover {
+	background-color:#FF0000;
+}
+
 .movie_info {
     display:none;
-
-	width: 350px;
-
+	width: 330px;
+	margin:0 auto;
 }
 
 .show_trailer {
@@ -232,14 +246,21 @@ body {
 	width:160px;
 	height:30px;
 	float:right;
-	margin-right:10px;
-	cursor:pointer;
+	
 	color:#FFFFFF;
 	line-height:30px;
 	background-color:#3C3C3C;
 }
 
-.show_trailer:hover {
+.show_trailer a {
+	width: 100%;
+	height: 100%;
+	display: block;
+	color:#FFFFFF;
+	text-decoration: none;
+}
+
+.show_trailer a:hover {
 	background-color:#FF0000;
 }
 
@@ -253,41 +274,40 @@ body {
 	background-color:#FFFFFF;
 }
 
-.link a {
-	color:#FFFFFF;
-	font-size:12pt;
-	text-decoration:none;
-}
-
-.link {
+.movie_link {
 	text-align: center;
 	width:160px;
-	margin-left:10px;
+	
 	height:30px;
 	float:left;
 	cursor:pointer;
-	color:#FFFFFF;
 	line-height:30px;
 	background-color:#3C3C3C;
 }
 
-.link:hover {
+.movie_link a {
+	width: 100%;
+	height: 100%;
+	display: block;
+	color:#FFFFFF;
+	text-decoration: none;
+	font-size:12pt;
+}
+
+.movie_link a:hover {
 	background-color:#FF0000;
 }
 
 
-.movies img {
-    
+.movies img {    
     width: 330px;
     height: 420px;
     
     margin:10px;
-    cursor:pointer;
+    border:none;
 }
 
 .count_bar_bg {
-       
-  
     height: 50px;
     margin-bottom:30px;
 }
@@ -326,15 +346,12 @@ body {
 	display:none;
 	background-color: #3C3C3C;
 	color:#FFFFFF;
-	font-size:20pt;
 	text-align:center;
-	cursor:pointer;
 	line-height: 80px;
 }
 
 .end {
 	display:none;
-	cursor:pointer;
 	margin: 100px auto;
 	width:300px;
 	height:80px;
@@ -345,14 +362,33 @@ body {
 	line-height: 80px;
 }
 
-.start:hover {
-	background-color:#FF0000;
-	cursor:pointer;	
+.start a {
+	font-size:20pt;
+
+	width: 100%;
+	height: 100%;
+	display: block;
+	color:#FFFFFF;
+	text-decoration: none;
 }
 
-.end:hover {
+.start a:hover {
 	background-color:#FF0000;
-	cursor:pointer;	
+}
+
+
+.end a {
+	font-size:20pt;
+
+	width: 100%;
+	height: 100%;
+	display: block;
+	color:#FFFFFF;
+	text-decoration: none;
+}
+
+.end a:hover {
+	background-color:#FF0000;
 }
 
 .finish {
@@ -371,6 +407,7 @@ body {
   	filter:alpha(opacity=80); /* For IE8 and earlier */
 	text-align:center;
 	padding-top:100px;
+	
 }
 .youtube {
 	margin: 0 auto;	
