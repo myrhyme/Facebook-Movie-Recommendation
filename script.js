@@ -72,6 +72,7 @@ var actorMap = new Map();
 var directorMap = new Map();
 var recommendMovieMap = new Map();
 var likedMovies = new Array();
+var randomMoviesShowed = new Array();
 var sortedActors, sortedDirectors;
 var getRecommendMovieFinished = false;
 var directorCount = 0;
@@ -145,11 +146,7 @@ function fbMovieListFetch(token) {
 					getMovieInfo(fb.name, null, false, false);
 				});
 			}
-			
-			
-		}	
-		
-		
+		}
 	});
 }
 
@@ -172,6 +169,7 @@ function saveResult() {
 		"userID" : userID,
 		"gender" : gender,
 		"birthday" : birthday,
+		"likedMovieCount" : likedMovies.length, 
 		"recommendVote" : voteCount[0],
 		"randomVote" : voteCount[1]
 	};
@@ -314,20 +312,26 @@ function showRandomMovieFromRank() {
 		},
 		success : function(html) {
 			//console.log(html);
-			var result = $(html);
-
-			////console.log(p);
+			var result = $(html).find("a");
 			var link = "http://movie.naver.com" + $(result).attr("href").replace("http://" + window.location.hostname, "");
 			var title = $(result).text();
-			////console.log(title);
-			var p = $("<div id='movie' class='movie'><a href='#' onclick='vote(1);'><img id ='poster_img' src='' /></a></div><div id='movie_info' class='movie_info'><div class='title'>" + title + "</div><div class='movie_link'><a href='" + link + "' target='_new'>영화정보 보기</a></div><input type='hidden' value='' id='random_movie_id' name='random_movie_id' /><div id='show_trailer' class='show_trailer'><a href='#' onclick='showTrailer(1);'>트레일러 보기</a></div></div>");
-			//console.log(link);
-			$('#movies > #random_movie').append(p);
 			
-			getPosterImage(link, p, "random");
-
-			getRandomMovieTrailer(link);
-
+			if(randomMoviesShowed.indexOf(title) === -1 && likedMovies.indexOf(title) === -1 ) {
+				////console.log(p);
+				
+				////console.log(title);
+				var p = $("<div id='movie' class='movie'><a href='#' onclick='vote(1);'><img id ='poster_img' src='' /></a></div><div id='movie_info' class='movie_info'><div class='title'>" + title + "</div><div class='movie_link'><a href='" + link + "' target='_new'>영화정보 보기</a></div><input type='hidden' value='' id='random_movie_id' name='random_movie_id' /><div id='show_trailer' class='show_trailer'><a href='#' onclick='showTrailer(1);'>트레일러 보기</a></div></div>");
+				//console.log(link);
+				$('#movies > #random_movie').append(p);
+				
+				getPosterImage(link, p, "random");
+	
+				getRandomMovieTrailer(link);
+				randomMoviesShowed.push(title);
+				//console.log(randomMoviesShowed);
+			} else {
+				showRandomMovieFromRank();				
+			}
 		}
 	});
 }
@@ -721,10 +725,8 @@ function getMovieInfo(title, year, recommend, show) {
 					}
 					*/
 					
-					if(recommend === false) {
-						var index = likedMovies.length - 1;
-						
-						likedMovies[index + 1] = resultTitle;
+					if(recommend === false) {						
+						likedMovies.push(resultTitle);
 						
 						var actors = $(item).find("actor");
 						var directors = $(item).find("director");
